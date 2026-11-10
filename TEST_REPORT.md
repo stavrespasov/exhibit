@@ -32,6 +32,8 @@ SQL privilege inspection confirmed:
 
 The Supabase security advisor returned an informational RLS-without-policy notice. This is intentional for a table accessed only by the server's protected credential; browser roles have no table privileges or row-access policies.
 
+A SQL transaction successfully inserted and read a temporary fixture, checked its future expiry, and rolled back. This verifies the database schema through the management connection; the app's server-key HTTP path still requires its separate check.
+
 ## External service probe
 
 A bounded AI Gateway smoke request using the linked project's OIDC credential returned HTTP 403: the Vercel team must add a valid payment method to unlock AI Gateway credits.
