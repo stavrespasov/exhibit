@@ -6,7 +6,7 @@ Turn one public GitHub repository and a job description into a shareable collect
 
 ## Project status
 
-Implementation is starting. This repository currently contains the product contract and implementation plan; it is not a working deployed application yet.
+Implementation is in progress. The source-citation verifier, strict input validation, and 29 automated boundary tests are implemented. The Supabase table is provisioned with server-only access. The application interface and complete analysis flow are still being built.
 
 ## The core loop
 
@@ -48,3 +48,9 @@ Next.js App Router, TypeScript, Tailwind CSS, customized accessible UI primitive
 These are engineering limits and targets, not measured performance claims.
 
 See [the implementation plan](docs/IMPLEMENTATION.md) for build order and release gates.
+
+## Current verification
+
+Run npm install followed by npm test for the focused verifier and input-validation suite.
+
+See [TEST_REPORT.md](TEST_REPORT.md) for tested behavior and remaining verification.
