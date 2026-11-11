@@ -47,7 +47,9 @@ An optional server-only `GITHUB_TOKEN` increases the public API rate limit. Repo
 
 Set `SAMPLE_EXHIBIT_ID` to a real generated report ID to feature it at `/example`. If that report expires or is unavailable, the example route opens the prefilled creation form. It never substitutes a fabricated result.
 
-Temporary provider HTTP 503 errors receive at most one retry inside the overall 45-second budget. Quota and permission errors stop without retries. Complete model JSON proposals are still checked independently per card; malformed candidates are withheld rather than promoted to evidence.
+Temporary provider HTTP 503 errors receive at most one retry inside the overall 45-second budget. A recognized model-specific Google HTTP 429 can switch once between `gemini-3.6-flash` and `gemini-3.5-flash-lite`; a configured `gemini-3.8-flash` can switch to Flash-Lite. Shared project limits, unknown quota errors, and permission failures do not trigger model switching. No limited model is immediately retried, and no paid provider is used. The report records the successful model for each analysis stage.
+
+If free capacity remains unavailable, the form preserves both inputs, honors provider retry timing, and offers the genuine reference example. Daily Google quotas reset at midnight Pacific time; a short RetryInfo delay is not presented as a daily reset. The form does not automatically resubmit. Complete model JSON proposals still pass independent card and citation validation; malformed candidates are withheld.
 
 ```sh
 npm test
@@ -86,7 +88,7 @@ Reference example: https://exhibit-orcin.vercel.app/example
 
 Reference walkthrough: https://exhibit-orcin.vercel.app/demo.mp4 — a continuous recording of a genuine, previously generated report, source inspection, the manifest, and sharing. It does not depict a new analysis being generated.
 
-The live source-to-report flow has been exercised with public repositories and real Gemini responses, including a fresh Vercel production analysis saved and retrieved from Supabase. The production build and 47 unit tests pass; all 10 desktop/mobile browser scenarios passed against both the local production build and the public deployment. The reference example contains independently rechecked citations and explicitly separates observed, partial, and unobserved requirements.
+The live source-to-report flow has been exercised with public repositories and real Gemini responses, including a fresh Vercel production analysis saved and retrieved from Supabase. The production build and 58 unit tests pass. The expanded desktop/mobile suite covers 14 cases, including cooldown and streamed quota recovery. See the verification report for local and public run evidence. The reference example contains independently rechecked citations and explicitly separates observed, partial, and unobserved requirements.
 
 See the [product brief](docs/PRODUCT_BRIEF.md), [verification report](TEST_REPORT.md), and [narrated walkthrough guide](docs/WALKTHROUGH.md). Google free-tier capacity was intermittent during verification; a successful recorded run is not an availability guarantee.
 

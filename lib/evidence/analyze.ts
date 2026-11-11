@@ -5,22 +5,22 @@ import { snapshot } from "../github/repository";
 import { loadSources } from "../github/blob-loader";
 import { extractRequirements } from "../ai/requirements";
 import { proposeEvidence } from "../ai/evidence";
-import { evidenceModel } from "../ai/client";
 import { verifyCards } from "./verifier";
 import { saveExhibit } from "../storage/exhibits";
 import type { Exhibit } from "./result";
-export type Progress = { phase: "repository" | "requirements" | "source" | "evidence" | "verification" | "saving"; current?: number; total?: number };
+export type Progress = { phase: "repository" | "requirements" | "source" | "evidence" | "verification" | "saving"; current?: number; total?: number; message?: string };
 export async function analyze(repoUrl: string, job: string, signal: AbortSignal, onProgress: (progress: Progress) => void): Promise<Exhibit> {
   const start = performance.now();
   const target = parseRepository(repoUrl);
   onProgress({ phase: "repository" });
   const repository = await snapshot(target.owner, target.repo, signal);
   onProgress({ phase: "requirements" });
-  const extracted = await extractRequirements(job, signal);
+  const fallbackMessage = "The first free model is rate-limited. Trying another available free model.";
+  const extracted = await extractRequirements(job, signal, () => onProgress({ phase: "requirements", message: fallbackMessage }));
   onProgress({ phase: "source" });
   const source = await loadSources(repository, extracted.requirements, signal, (current, total) => onProgress({ phase: "source", current, total }));
   onProgress({ phase: "evidence" });
-  const proposed = await proposeEvidence(extracted.requirements, source.files, signal);
+  const proposed = await proposeEvidence(extracted.requirements, source.files, signal, extracted.modelId, () => onProgress({ phase: "evidence", message: fallbackMessage }));
   onProgress({ phase: "verification" });
   const verified = verifyCards(proposed.cards, extracted.requirements, source.manifest);
   const created = new Date();
@@ -37,7 +37,7 @@ export async function analyze(repoUrl: string, job: string, signal: AbortSignal,
       failedFiles: source.failedFiles, files: Object.values(source.manifest.files).map(({ path, blobSha, lineCount }) => ({ path, blobSha, lineCount })),
     },
     createdAt: created.toISOString(), expiresAt: new Date(created.getTime() + 30 * 86400000).toISOString(),
-    metrics: { durationMs: Math.round(performance.now() - start), modelId: evidenceModel().modelId, inputTokens, outputTokens, estimatedModelUsd: 0, rejectedCitations: verified.rejectedCitations },
+    metrics: { durationMs: Math.round(performance.now() - start), modelId: [...new Set([extracted.modelId, proposed.modelId])].join(" + "), models: { requirements: extracted.modelId, evidence: proposed.modelId }, inputTokens, outputTokens, estimatedModelUsd: 0, rejectedCitations: verified.rejectedCitations },
   };
   onProgress({ phase: "saving" });
   await saveExhibit(result, signal);

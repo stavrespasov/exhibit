@@ -41,6 +41,29 @@ test("a provider limit preserves both inputs", async ({ page }) => {
   await expect(page.getByLabel("The job description")).toHaveValue(job);
   await expect(page.getByLabel("Your public repository")).toHaveValue("https://github.com/shadcn-ui/taxonomy");
 });
+test("provider cooldown prevents repeated requests and expires without an automatic retry", async ({ page }) => {
+  await page.goto("/create?example=1");
+  const job = await page.getByLabel("The job description").inputValue();
+  let calls = 0;
+  await page.route("**/api/analyze", route => {
+    calls++;
+    return route.fulfill({ status: 429, headers: { "Retry-After": "2" }, contentType: "application/json", body: JSON.stringify({ message: "Google is limiting free AI requests right now." }) });
+  });
+  await page.getByRole("button", { name: "Build my Exhibit", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Try again in/ })).toBeDisabled();
+  await expect(page.getByRole("link", { name: "Explore a real example" })).toHaveAttribute("href", "/example");
+  await expect(page.getByRole("button", { name: "Build my Exhibit", exact: true })).toBeEnabled();
+  expect(calls).toBe(1);
+  await expect(page.getByLabel("The job description")).toHaveValue(job);
+});
+test("a streamed quota error carries its retry timing to the form", async ({ page }) => {
+  await page.goto("/create?example=1");
+  await page.route("**/api/analyze", route => route.fulfill({ status: 200, contentType: "application/x-ndjson", body: JSON.stringify({ type: "error", code: "FREE_LIMIT", message: "Google is limiting free AI requests right now.", retryAfter: 60 }) + "\n" }));
+  await page.getByRole("button", { name: "Build my Exhibit", exact: true }).click();
+  await expect(page.getByRole("button", { name: /Try again in/ })).toBeDisabled();
+  await expect(page.getByRole("alert").filter({ hasText: "Google is limiting" })).toContainText("Retry after");
+  await expect(page.getByLabel("Your public repository")).toHaveValue("https://github.com/shadcn-ui/taxonomy");
+});
 test("stored evidence opens source, copies its link, and works in a fresh browser", async ({ page, browser }, info) => {
   const id = fixture().active;
   const errors: string[] = [];

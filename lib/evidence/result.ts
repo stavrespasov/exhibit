@@ -13,5 +13,5 @@ export type Exhibit = {
   };
   createdAt: string;
   expiresAt: string;
-  metrics: { durationMs: number; modelId: string; inputTokens: number; outputTokens: number; estimatedModelUsd: number; rejectedCitations: number };
+  metrics: { durationMs: number; modelId: string; models?: { requirements: string; evidence: string }; inputTokens: number; outputTokens: number; estimatedModelUsd: number; rejectedCitations: number };
 };

@@ -1149,6 +1149,26 @@ input::placeholder,textarea::placeholder {
   margin-top: 2px;
 }
 
+.form-error > div {
+  min-width: 0;
+}
+
+.form-error a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  margin-top: 8px;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.form-error .retry-time {
+  margin-top: 8px;
+  font-size: 11px;
+}
+
 .create-aside {
   padding-top: 20px;
 }

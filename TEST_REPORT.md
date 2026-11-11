@@ -2,6 +2,16 @@
 
 Updated: 11 November 2026
 
+## Free-model quota recovery
+
+Production logs confirmed Google HTTP 429 failures during evidence generation for the reported incident. The original quota response body was not retained, so its exact quota dimension is not established. A later small request and a 9,890-input-token SilberBerg evidence request succeeded; this does not establish unlimited capacity.
+
+Recognized model-specific limits can now switch once to another allowlisted, free-tier-eligible Google model. Shared-project limits, unknown 429 responses, permission errors, and malformed output do not cause model cycling. Daily reset handling follows Pacific midnight, including daylight-saving changes. The form honors HTTP and streamed retry timing, blocks repeated submits during the cooldown, retains inputs, and exposes the real reference example. No automatic resubmission or billing activation is configured.
+
+Vitest: 58 tests across 8 files passed. The production build and TypeScript check passed. Twelve browser cases passed in the initial expanded run; two streamed-error cases then passed after narrowing a test selector to exclude Next.js's route announcer. New coverage includes quota parsing, shared versus model-specific scope, daylight-saving reset boundaries, one alternate only, cancellation, the free-model allowlist, and cooldown expiration without an automatic request.
+
+An integration check simulated the primary model's quota error and made a real request to gemini-3.5-flash-lite for stavrespasov/SilberBerg at commit 881e249812235f2dfc69890915a512adb28f1c40. It inspected 12 files (21,742 source characters), used 9,890 input / 617 output tokens, and produced two source-supported and three unobserved cards with zero rejected citations. The primary quota error in this check was simulated; the alternate response and citation verification were real. The requirements were a test role, not the user's original job description. Per-stage model identifiers are retained in new reports; old reports remain readable.
+
 ## Neobrutalist refresh
 
 The landing page, creation form, evidence board, source inspector, and error states use cobalt, off-white, white, and ink, with solid outlines and hard shadows. Primary buttons and the highlighted headline use white on cobalt. Decorative star and floating-sticker graphics were removed, along with emoji-style characters in UI copy. A source scan of all 14 UI/route TypeScript files found no literal emoji characters. Production build and TypeScript validation passed. All 10 desktop/phone browser scenarios passed again against the cobalt production build in 24.2 seconds.
@@ -13,11 +23,11 @@ The expanded landing preview was checked at 320, 375, 640, 768, 900, 901, 1024, 
 ## Build and automated boundaries
 
 - Production Next.js build and TypeScript validation passed.
-- Vitest: 47 tests across 7 files passed.
-- Playwright against the local production build: all 10 scenarios passed at desktop 1440px and phone 375px.
-- The same 10 scenarios passed against the public production URL, https://exhibit-orcin.vercel.app, in 23.2 seconds. No deployment credentials were injected into the browser.
+- Vitest: 58 tests across 8 files passed.
+- The current expanded suite covers 14 desktop/phone cases. See quota-recovery evidence above for its local run.
+- The earlier 10-case suite passed against the public production URL, https://exhibit-orcin.vercel.app, in 23.2 seconds. No deployment credentials were injected into the browser.
 
-Unit coverage includes repository and input boundaries, exact citation correspondence, mixed-validity fail-closed behavior, source-file selection, credential exclusion, the 80,000-character model-source budget, same-origin enforcement behind a reverse proxy, streamed-body size and cancellation, bounded provider retries, and safe handling of malformed model proposals. HTTP 429 and permission failures are not retried. A recovered proposal still passes strict card and citation validation; invalid observations are withheld.
+Unit coverage includes repository and input boundaries, exact citation correspondence, mixed-validity fail-closed behavior, source-file selection, credential exclusion, the 80,000-character model-source budget, same-origin enforcement behind a reverse proxy, streamed-body size and cancellation, bounded provider retries, and safe handling of malformed model proposals. The same model is not immediately retried after HTTP 429; recognized model-specific limits permit one free alternate. A recovered proposal still passes strict card and citation validation; invalid observations are withheld.
 
 The browser suite covers controls waiting for JavaScript readiness, landing interactions, prefilled input, preserved inputs after a provider-limit response, stored report rendering, desktop and mobile source inspection, clipboard sharing opened in a fresh browser context, expired-report 404, invalid-repository 422, and horizontal overflow. The stored QA fixtures are explicitly synthetic and deleted on teardown. A provider-limit response is intercepted; no successful model response is fabricated by those tests.
 
