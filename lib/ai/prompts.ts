@@ -13,6 +13,8 @@ export const EVIDENCE_INSTRUCTIONS = [
   "Return at most one candidate card for every supplied requirement, including not_observed cards.",
   "Every supported or partial candidate needs a direct implementation citation. Dependencies and README claims alone are insufficient.",
   "Copy exactQuote from real source characters, without the artificial line-number prefix. Cite a tightly relevant range of at most 100 lines.",
+  "Keep each exactQuote between 12 and 200 characters: copy one contiguous substring from a single source line, without its indentation or line-number prefix. Do not join, reformat or paraphrase source. The server will reconstruct and display the full cited range.",
+  "Use at most two citations per card, explanations under 400 characters, and at most two short limitations. Return complete JSON within the output budget.",
   "Use supplied FILE ids only. A claim may cite two files if the behavior spans them.",
   "Keep claims narrowly observational. Do not infer authorship, expertise, production correctness, security or scalability.",
   "Test source establishes that a test is written, not that it passed. A dependency alone does not establish an integration.",

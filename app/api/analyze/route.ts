@@ -4,23 +4,10 @@ import { analyze } from "@/lib/evidence/analyze";
 import { evidenceModel } from "@/lib/ai/client";
 import { database } from "@/lib/storage/exhibits";
 import { reserveAnalysis } from "@/lib/security/rate-limit";
+import { assertSameOrigin } from "@/lib/security/origin";
+import { boundedJson } from "@/lib/security/json-body";
 export const runtime = "nodejs";
 export const maxDuration = 60;
-async function boundedJson(request: Request) {
-  if (!request.body) throw new AppError("EMPTY_INPUT", "Enter a repository and job description.");
-  const reader = request.body.getReader();
-  let size = 0;
-  const parts: Uint8Array[] = [];
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > 65536) { await reader.cancel(); throw new AppError("INPUT_TOO_LARGE", "The input is too large. Use a job description under 8,000 characters.", 413); }
-    parts.push(value);
-  }
-  try { return JSON.parse(Buffer.concat(parts).toString("utf8")); }
-  catch { throw new AppError("INVALID_INPUT", "The input could not be read. Please try again."); }
-}
 function publicError(error: unknown, aborted = false) {
   if (aborted) return new AppError("TIMEOUT", "This inspection exceeded its time limit. Try a smaller repository.", 504);
   if (error instanceof AppError) return error;
@@ -30,9 +17,8 @@ export async function POST(request: Request) {
   const cancel = new AbortController();
   const signal = AbortSignal.any([request.signal, cancel.signal, AbortSignal.timeout(45000)]);
   try {
-    const origin = request.headers.get("origin");
-    if (origin && origin !== new URL(request.url).origin) throw new AppError("ORIGIN", "This request could not be accepted.", 403);
-    const parsed = AnalyzeInputSchema.safeParse(await boundedJson(request));
+    assertSameOrigin(request);
+    const parsed = AnalyzeInputSchema.safeParse(await boundedJson(request, signal));
     if (!parsed.success) throw new AppError("INVALID_INPUT", parsed.error.issues[0]?.message ?? "Check the repository and job description.", 422);
     parseRepository(parsed.data.repoUrl);
     evidenceModel(); database();

@@ -15,5 +15,5 @@ export default async function ExhibitPage({ params }: { params: Promise<{ id: st
   try { result = await getExhibit(id); } catch { unavailable = true; }
   if (!result) return <><Header compact /><main id="main" className="unavailable-page shell"><span className="eyebrow">THE SOURCE TRAIL ENDS HERE</span><h1>{unavailable ? "Temporarily unavailable." : "This Exhibit isn’t available."}</h1><p>{unavailable ? "The result store couldn't be reached. Please try this link again shortly." : "Its link may have expired, or the address may be incomplete. Shared Exhibits are available for 30 days."}</p><Button asChild><Link href="/create">Build a new Exhibit <span aria-hidden="true">↗</span></Link></Button></main><Footer /></>;
   const highlights = await highlightSources(result);
-  return <><Header compact /><EvidenceBoard exhibit={result} highlights={highlights} /><Footer /></>;
+  return <><Header compact /><EvidenceBoard exhibit={result} highlights={highlights} isExample={id === process.env.SAMPLE_EXHIBIT_ID} /><Footer /></>;
 }

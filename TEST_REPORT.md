@@ -2,55 +2,49 @@
 
 Updated: 11 November 2026
 
-## Automated checks completed
+## Build and automated boundaries
 
-- Vitest: 3 test files, 33 tests passed.
-- Next.js production build and TypeScript validation passed.
-- Playwright: all 8 desktop/mobile scenarios passed across the initial run and the targeted rerun after correcting an ambiguous alert selector. Six scenarios passed initially; the two affected error-recovery scenarios passed on rerun.
+- Production Next.js build and TypeScript validation passed.
+- Vitest: 47 tests across 7 files passed.
+- Playwright against the local production build: all 10 scenarios passed at desktop 1440px and phone 375px.
 
-Unit coverage includes strict repository URLs and input boundaries; exact job quotations; invalid, fractional, and out-of-bounds citations; CRLF normalization; immutable source links; dependency-only evidence; file selection, credential exclusion, and size limits. A card with any invalid proposed citation fails closed, including mixed valid/invalid citation sets. These checks establish source correspondence, not the correctness of a model's interpretation.
+Unit coverage includes repository and input boundaries, exact citation correspondence, mixed-validity fail-closed behavior, source-file selection, credential exclusion, the 80,000-character model-source budget, same-origin enforcement behind a reverse proxy, streamed-body size and cancellation, bounded provider retries, and safe handling of malformed model proposals. HTTP 429 and permission failures are not retried. A recovered proposal still passes strict card and citation validation; invalid observations are withheld.
 
-Browser coverage at 1440px and 375px includes the landing interaction, sample input, preserved inputs after a provider-limit error, a real database-backed report, the source inspector, clipboard sharing opened in a fresh browser context, expired-report 404, malformed-repository 422, and horizontal overflow checks. The tested pages produced no JavaScript errors.
+The browser suite covers controls waiting for JavaScript readiness, landing interactions, prefilled input, preserved inputs after a provider-limit response, stored report rendering, desktop and mobile source inspection, clipboard sharing opened in a fresh browser context, expired-report 404, invalid-repository 422, and horizontal overflow. The stored QA fixtures are explicitly synthetic and deleted on teardown. A provider-limit response is intercepted; no successful model response is fabricated by those tests.
 
-Browser reports were explicitly labeled synthetic QA fixtures, inserted into Supabase for the test and deleted on teardown. The provider-limit response was intercepted in the browser. These tests do **not** establish a successful live GitHub-to-model analysis. Desktop landing and mobile report screenshots were visually reviewed.
+## Real model and repository runs
 
-A subsequent production browser run could not reach the app because this environment’s Chromium trust store lacks the supplied proxy CA; all eight remote scenarios stopped at certificate or connection errors. Automatic approval review rejected adding that CA to the persistent browser trust store, so no trust settings were changed. Production verification instead used HTTPS clients with the environment’s existing CA trust. The local browser pass is not claimed as a production browser pass.
+These are observed runs, not latency guarantees or semantic-accuracy measurements.
 
-## Database and server access
+| Repository and pinned commit | Model | Analysis time | Input/output tokens | Result |
+| --- | --- | --- | --- | --- |
+| shadcn-ui/taxonomy · 298a8857c7128a0d121e7f699dfd729f23b3966d | gemini-3.6-flash | 14.901s | 9,380 / 1,830 | 3 observed, 1 partial, 1 not observed; 0 rejected citations |
+| stavrespasov/exhibit · 4d7181673dc765946d3cca16e1bfbef600fb13ef | gemini-3.5-flash-lite | 37.766s | 6,826 / 1,905 | 1 observed, 4 not observed; 3 rejected citations |
 
-Both migrations are applied to the designated EXHIBIT project. Privilege inspection confirmed RLS enabled, no browser-role table access, and server-role access. The rate-limit RPC is restricted to the server role and uses hashed IP keys rather than raw addresses.
+The first complete browser POST took 17.3 seconds including the server's remaining work. Both reports were saved to Supabase and rendered by the application. Their model identifiers and token usage come from actual responses. The deployed configuration uses gemini-3.6-flash; Flash-Lite was an additional verification run.
 
-- SQL transaction insert/read/expiry checks passed and rolled back.
-- A rate-limit transaction allowed five requests and rejected the sixth, then rolled back.
-- The saved Development server key was validated against the Supabase REST API with HTTP 200.
-- Browser fixture insert, application server read, report rendering, expiry handling, and fixture deletion succeeded through the HTTP data path.
+The taxonomy reference inspected 12 of 136 eligible files and 18,926 source characters. A separate GitHub blob fetch independently confirmed all six cited excerpts, quoted substrings, ranges, commit references, and SHA-256 excerpt hashes. Human review of the five observations found:
 
-The security advisor's informational RLS-without-policy notice is intentional for server-only tables; browser roles have no table privileges or access policies.
+- React/Next.js/TypeScript UI structure is visible in the inspected layout and page source.
+- Authentication is conservatively partial: API session checks are shown, while complete dashboard protection is not established by the selected files.
+- Prisma schema and database update calls support the storage observation.
+- Checkout creation and webhook signature construction support the Stripe observation; runtime correctness is not certified.
+- Automated behavior tests are not established in the bounded sample. This does not assert their absence elsewhere.
 
-## Model provider and release limits
+The genuine reference report was then checked in desktop and phone browsers: all six citations could be opened, multi-source tabs worked, the 12-file manifest rendered, Escape closed the phone sheet, copied links opened in fresh browser contexts, and no JavaScript errors or page-wide horizontal overflow were observed.
 
-An earlier AI Gateway probe returned HTTP 403 because billing verification was required. The application now calls Google Gemini directly under the intended free, unbilled configuration, with no Gateway or paid-provider fallback. No live Gemini result has been received yet.
+## Storage and access
 
-Still unverified:
+The exhibits and shared rate-limit migrations are applied. RLS is enabled; browser roles have no table access, and reads/writes use the server credential. SQL transaction insert/read/expiry and five-allowed/sixth-rejected quota checks passed and rolled back. The actual server credential's REST path and browser-to-server-to-Supabase path were also verified.
 
-- Complete public GitHub → Gemini → citation verification → persisted result flow.
-- Human review of real generated semantic claims and a genuine public example.
-- Measured model latency, token usage, and free-project quota behavior.
+Shared results expire after 30 days. Raw job descriptions and complete source files are not stored in report rows. Only selected excerpts, extracted requirements, and inspection metadata are retained. Keys are server-only and excluded from source control.
 
-Source is published at https://github.com/stavrespasov/exhibit. A shared source cache keyed by commit remains deferred.
+## Provider and scope limits
 
-## Deployed HTTP checks
+Google returned intermittent HTTP 503 capacity errors during verification. The application keeps the user's inputs, makes only a bounded temporary-error retry, and does not route to a paid provider. Free operation assumes a free, unbilled Google project; the allowlist cannot prevent charges on a billed project.
 
-Vercel deployment `dpl_6bRWUW2Yk2sYYrfvamVXJbpMcTe3` is READY at https://exhibit-orcin.vercel.app, built from commit `6c1f180`. Framework: Next.js. Node.js: 24.x. Functions: Frankfurt. Reported build duration: 33 seconds. Vercel automatically assigned the first deployment to production.
+Source verification establishes correspondence to inspected code. It does not prove the interpretation, authorship, personal expertise, production readiness, or passing tests. The recorded runs are a small sample. A shared source cache remains deferred.
 
-Verified with HTTPS certificate validation enabled:
+## Deployment verification
 
-- Landing and creation pages: HTTP 200.
-- All 10 referenced JavaScript/CSS assets: HTTP 200.
-- Synthetic stored report and its JSON endpoint: HTTP 200 with the expected ID and exact source quotation.
-- Expired report API: HTTP 404.
-- Malformed repository input: HTTP 422 with INVALID_REPOSITORY.
-- Valid analysis input: HTTP 503 with SETUP_REQUIRED because the Gemini key is absent. This is the first blocked boundary of live generation.
-- Temporary database fixtures were deleted after verification.
-
-The public URL demonstrates the deployed interface; successful live generation is not yet established. No generated sample has been fabricated to fill that gap.
+The updated Vercel preview built successfully. Its /example route redirects to the genuine reference report. A new deployed analysis reached Google but returned the handled MODEL_UNAVAILABLE event while the provider reported HTTP 503. Successful new generation on the final production deployment therefore remains a release-verification limit until provider capacity returns. Public browser and stored-report checks are completed against the production release separately.

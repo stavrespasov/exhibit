@@ -6,3 +6,5 @@ playwright-report/
 coverage/
 e2e/
 tests/
+playwright.config.ts
+vitest.config.ts

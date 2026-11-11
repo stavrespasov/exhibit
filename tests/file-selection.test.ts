@@ -17,3 +17,9 @@ it("avoids forwarding obvious embedded credentials", () => {
   expect(containsLikelyCredential('const key = "ghp_' + "a".repeat(36) + '";')).toBe(true);
   expect(containsLikelyCredential('const key = process.env.GITHUB_TOKEN;')).toBe(false);
 });
+
+it("excludes modern Google and Supabase credentials embedded in source", () => {
+  for (const prefix of ["AQ.", "AIza", "sb_secret_"]) {
+    expect(containsLikelyCredential('const key = "' + prefix + "x".repeat(48) + '";')).toBe(true);
+  }
+});

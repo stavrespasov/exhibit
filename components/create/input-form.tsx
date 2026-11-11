@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Check, Braces, LoaderCircle, LockKeyhole, Plus, X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ const steps = [
   ["saving", "Saving your shareable Exhibit"],
 ];
 export function InputForm({ example = false }: { example?: boolean }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [repo, setRepo] = useState(example ? sampleRepository : "");
   const [job, setJob] = useState(example ? sampleJob : "");
   const [busy, setBusy] = useState(false);
@@ -58,11 +60,11 @@ export function InputForm({ example = false }: { example?: boolean }) {
   return <div className="create-grid">
     <form className="input-panel" onSubmit={submit}>
       <div className="input-panel-top"><span className="mono">NEW EXHIBIT / 001</span><span><LockKeyhole size={12} />No account required</span></div>
-      <div className="field-group"><label htmlFor="repository"><span className="field-number">01</span>Your public repository</label><p>The project you want your work to speak through.</p><div className="repository-input"><Braces size={18} /><input id="repository" type="url" placeholder="https://github.com/you/your-project" value={repo} onChange={event => setRepo(event.target.value)} required maxLength={250} disabled={busy} autoComplete="off" spellCheck={false} /></div></div>
+      <div className="field-group"><label htmlFor="repository"><span className="field-number">01</span>Your public repository</label><p>The project you want your work to speak through.</p><div className="repository-input"><Braces size={18} /><input id="repository" type="url" placeholder="https://github.com/you/your-project" value={repo} onChange={event => setRepo(event.target.value)} required maxLength={250} disabled={!ready || busy} autoComplete="off" spellCheck={false} /></div></div>
       <div className="input-divider"><Plus size={13} /></div>
-      <div className="field-group"><label htmlFor="job"><span className="field-number">02</span>The job description</label><p>Paste the role and its technical requirements.</p><textarea id="job" placeholder="We’re looking for a developer who..." value={job} onChange={event => setJob(event.target.value)} required minLength={120} maxLength={8000} rows={9} disabled={busy} /><div className="field-meta"><button type="button" onClick={() => { setRepo(sampleRepository); setJob(sampleJob); setError(""); }} disabled={busy}>Try a public example <ArrowUpRight size={12} /></button><span>{job.length.toLocaleString()} / 8,000</span></div></div>
+      <div className="field-group"><label htmlFor="job"><span className="field-number">02</span>The job description</label><p>Paste the role and its technical requirements.</p><textarea id="job" placeholder="We’re looking for a developer who..." value={job} onChange={event => setJob(event.target.value)} required minLength={120} maxLength={8000} rows={9} disabled={!ready || busy} /><div className="field-meta"><button type="button" onClick={() => { setRepo(sampleRepository); setJob(sampleJob); setError(""); }} disabled={!ready || busy}>Try a public example <ArrowUpRight size={12} /></button><span>{job.length.toLocaleString()} / 8,000</span></div></div>
       {error && <div className="form-error" role="alert"><AlertCircle size={17} /><p>{error}</p></div>}
-      <div className="submit-row"><Button type="submit" disabled={busy || !repo.trim() || job.trim().length < 120}>{busy ? <><LoaderCircle size={17} className="spin" />{phase === "opening" ? "Opening your Exhibit" : "Building your Exhibit"}</> : <>Build my Exhibit<ArrowUpRight size={17} /></>}</Button>{busy && <Button type="button" variant="quiet" onClick={() => abort.current?.abort()}><X size={15} />Cancel</Button>}</div>
+      <div className="submit-row"><Button type="submit" disabled={!ready || busy || !repo.trim() || job.trim().length < 120}>{busy ? <><LoaderCircle size={17} className="spin" />{phase === "opening" ? "Opening your Exhibit" : "Building your Exhibit"}</> : <>Build my Exhibit<ArrowUpRight size={17} /></>}</Button>{busy && <Button type="button" variant="quiet" onClick={() => abort.current?.abort()}><X size={15} />Cancel</Button>}</div>
       <p className="consent-note">Selected source and job text go to Gemini’s free tier, where content may be used to improve Google products. Use public material. Anyone with your result link can view its selected excerpts and requirements for 30 days.</p>
     </form>
     <aside className="create-aside">

@@ -20,5 +20,5 @@ export function rankFiles(files: TreeEntry[], requirements: Requirement[]): Tree
   return [...files].sort((a, b) => score(b) - score(a) || a.path.localeCompare(b.path)).slice(0, 12);
 }
 export function containsLikelyCredential(content: string): boolean {
-  return /(?:gh[pousr]_[A-Za-z0-9]{30,}|sk-(?:proj-)?[A-Za-z0-9_-]{40,}|AKIA[A-Z0-9]{16}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)/.test(content);
+  return /(?:gh[pousr]_[A-Za-z0-9]{30,}|sk-(?:proj-)?[A-Za-z0-9_-]{40,}|sb_secret_[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{30,}|AQ\.[A-Za-z0-9_-]{30,}|AKIA[A-Z0-9]{16}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)/.test(content);
 }

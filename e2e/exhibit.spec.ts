@@ -1,6 +1,19 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { qaProxy } from "./network";
 function fixture() { return JSON.parse(readFileSync("work/qa-fixture.json", "utf8")) as { active: string; expired: string }; }
+test("creation waits for its interactive controls before allowing submission", async ({ page }) => {
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/_next\/static\/.*\.js/, async route => { await gate; await route.continue(); });
+  try {
+    await page.goto("/create?example=1", { waitUntil: "commit" });
+    await expect(page.getByRole("button", { name: "Build my Exhibit", exact: true })).toBeDisabled();
+    await expect(page.getByLabel("Your public repository")).toBeDisabled();
+  } finally { release(); }
+  await expect(page.getByRole("button", { name: "Build my Exhibit", exact: true })).toBeEnabled();
+  await expect(page.getByLabel("Your public repository")).toHaveValue("https://github.com/shadcn-ui/taxonomy");
+});
 test("landing, preview, and creation work without horizontal overflow", async ({ page }, info) => {
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -46,7 +59,7 @@ test("stored evidence opens source, copies its link, and works in a fresh browse
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("/e/" + id);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: "work/exhibit-" + info.project.name + ".png", fullPage: true });
-  const fresh = await browser.newContext();
+  const fresh = await browser.newContext({ proxy: qaProxy });
   const receiver = await fresh.newPage();
   await receiver.goto(new URL("/e/" + id, page.url()).href);
   await expect(receiver.getByRole("heading", { name: /QA fixture/ })).toBeVisible();

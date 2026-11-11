@@ -1,4 +1,5 @@
 import { defineConfig } from "@playwright/test";
+import { qaProxy } from "./e2e/network";
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -10,6 +11,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.QA_BASE_URL ?? "http://127.0.0.1:3000",
     browserName: "chromium",
+    proxy: qaProxy,
     launchOptions: { executablePath: process.env.CHROMIUM_PATH ?? "/usr/bin/chromium", args: ["--no-sandbox", "--disable-dev-shm-usage"] },
     permissions: ["clipboard-read", "clipboard-write"],
     trace: "retain-on-failure",

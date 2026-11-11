@@ -5,7 +5,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { LivePreview } from "@/components/landing/live-preview";
 export default function Home() {
-  const example = process.env.SAMPLE_EXHIBIT_ID ? "/e/" + process.env.SAMPLE_EXHIBIT_ID : "/create?example=1";
+  const example = "/example";
   return <>
     <Header />
     <main id="main">

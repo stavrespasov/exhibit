@@ -39,11 +39,15 @@ npm run dev
 
 Apply the SQL files in `supabase/migrations` to your designated Supabase project in timestamp order. The tables and rate-limit RPC are accessible only to the server role. Never expose `SUPABASE_SECRET_KEY` or the model key through a public environment variable.
 
-Configure a Google AI Studio key from a **free, unbilled project** as `GOOGLE_GENERATIVE_AI_API_KEY`. The default model is `gemini-3.8-flash`. Generation uses Google's API directly; there is no Vercel AI Gateway or paid-provider fallback. Quota errors preserve the user's inputs. A model allowlist cannot prevent charges on a billed Google project: use an unbilled project for the intended free-tier setup.
+Configure a Google AI Studio key from a **free, unbilled project** as `GOOGLE_GENERATIVE_AI_API_KEY`. The default model is `gemini-3.6-flash`. Generation uses Google's API directly; there is no Vercel AI Gateway or paid-provider fallback. Quota errors preserve the user's inputs. A model allowlist cannot prevent charges on a billed Google project: use an unbilled project for the intended free-tier setup.
 
 The UI discloses that selected public source and job text are processed by Gemini and that free-tier content may be used to improve Google's products. Shared reports contain extracted requirements and selected source excerpts.
 
 An optional server-only `GITHUB_TOKEN` increases the public API rate limit. Repository code is inspected as text and never executed.
+
+Set `SAMPLE_EXHIBIT_ID` to a real generated report ID to feature it at `/example`. If that report expires or is unavailable, the example route opens the prefilled creation form. It never substitutes a fabricated result.
+
+Temporary provider HTTP 503 errors receive at most one retry inside the overall 45-second budget. Quota and permission errors stop without retries. Complete model JSON proposals are still checked independently per card; malformed candidates are withheld rather than promoted to evidence.
 
 ```sh
 npm test
@@ -78,6 +82,8 @@ Deployed interface: https://exhibit-orcin.vercel.app
 
 Public source: https://github.com/stavrespasov/exhibit
 
-The app builds, its 33 unit tests pass, and desktop/mobile browser checks pass for the interface, persisted reports, sharing, expiry, validation, and error recovery. Live model generation and a genuinely generated public example still require the free Gemini key and end-to-end verification. See [TEST_REPORT.md](TEST_REPORT.md) for exact coverage and remaining release checks.
+Reference example: https://exhibit-orcin.vercel.app/example
+
+The live source-to-report flow has been exercised with public repositories and real Gemini responses. The production build, 47 unit tests, and 10 desktop/mobile browser scenarios pass locally. The reference example contains independently rechecked citations and explicitly separates observed, partial, and unobserved requirements. See [TEST_REPORT.md](TEST_REPORT.md) for the measured runs and verification limits.
 
 Deploy the repository root as a Next.js project on Vercel and configure the server variables from `.env.example` for the intended environments. Keep `.env.local`, `.vercel`, browser traces, and authentication files out of source control.

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 const labels = { supported: "Source observed", partial: "Partially evidenced", not_observed: "Not observed" };
 function utcDate(value: string) { return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value)); }
-export function EvidenceBoard({ exhibit, highlights }: { exhibit: Exhibit; highlights: HighlightMap }) {
+export function EvidenceBoard({ exhibit, highlights, isExample = false }: { exhibit: Exhibit; highlights: HighlightMap; isExample?: boolean }) {
   const [selected, setSelected] = useState(Math.max(0, exhibit.cards.findIndex(card => card.citations.length > 0)));
   const [citationIndex, setCitationIndex] = useState(0);
   const [mobileSource, setMobileSource] = useState(false);
@@ -42,6 +42,7 @@ export function EvidenceBoard({ exhibit, highlights }: { exhibit: Exhibit; highl
   </div>;
   return <main id="main" className="exhibit-page shell">
     <div className="dossier-label"><span className="eyebrow">ENGINEERING EVIDENCE / {exhibit.id.slice(0,8).toUpperCase()}</span><span className="mono">PREPARED {utcDate(exhibit.createdAt).toUpperCase()}</span></div>
+    {isExample && <p className="example-note">PUBLIC REFERENCE EXAMPLE · Repository by {exhibit.repository.owner}. Applicant contribution is unverified.</p>}
     <section className="dossier-heading"><div><h1>An Exhibit for<br /><em>{exhibit.title}.</em></h1><a className="repo-link" href={exhibit.repository.url} target="_blank" rel="noopener noreferrer"><span className="repo-square"><Braces size={16} /></span>{exhibit.repository.owner}<span>/</span><strong>{exhibit.repository.name}</strong><ArrowUpRight size={14} /></a></div><div className="share-block"><Button onClick={copy}>{copyState === "Link copied" ? <Check size={16} /> : <Copy size={16} />}{copyState === "Link copied" ? "Link copied" : "Copy Exhibit link"}</Button><span>Read-only. No account to open.</span><p role="status" aria-live="polite">{copyState && copyState !== "Link copied" ? copyState : "Link expires " + utcDate(exhibit.expiresAt) + " (UTC)"}</p></div></section>
     <div className="coverage-band"><span className="coverage-icon"><ScanLine size={21} /></span><p><strong>{exhibit.inspection.filesInspected} files inspected</strong><span> of {exhibit.inspection.filesDiscovered} eligible files listed. Findings describe this bounded snapshot.</span></p><span className="coverage-commit mono"><GitCommitHorizontal size={14} />{exhibit.repository.commitSha.slice(0,8)}</span></div>
     {(exhibit.inspection.treeTruncated || exhibit.inspection.failedFiles > 0) && <p className="coverage-warning">{exhibit.inspection.treeTruncated ? "The repository listing was partial. Counts do not represent the complete repository. " : ""}{exhibit.inspection.failedFiles > 0 ? exhibit.inspection.failedFiles + " selected file(s) could not be read." : ""}</p>}

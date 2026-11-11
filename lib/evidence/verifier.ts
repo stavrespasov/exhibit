@@ -33,7 +33,10 @@ export function verifyCards(candidates: unknown[], requirements: Requirement[], 
       title: requirement.name, status: "not_observed", explanation: "The inspected files do not establish this requirement.",
       citations: [], limitations: ["Evidence may exist in files outside this bounded inspection."],
     };
-    if (!candidate?.success) return empty;
+    if (!candidate?.success) {
+      const wasProposed = candidates.some(item => item && typeof item === "object" && "requirementId" in item && item.requirementId === requirement.id);
+      return wasProposed ? { ...empty, validationNote: "The proposed observation did not pass validation and was withheld." } : empty;
+    }
     const proposed = candidate.data;
     if (proposed.status === "not_observed") return { ...empty, limitations: proposed.limitations.length ? proposed.limitations : empty.limitations };
     let citationFailed = false;
