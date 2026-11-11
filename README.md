@@ -74,6 +74,10 @@ Limits describe the implementation, not measured latency or quality guarantees. 
 
 ## Release status
 
+Deployed interface: https://exhibit-orcin.vercel.app
+
+Public source: https://github.com/stavrespasov/exhibit
+
 The app builds, its 33 unit tests pass, and desktop/mobile browser checks pass for the interface, persisted reports, sharing, expiry, validation, and error recovery. Live model generation and a genuinely generated public example still require the free Gemini key and end-to-end verification. See [TEST_REPORT.md](TEST_REPORT.md) for exact coverage and remaining release checks.
 
 Deploy the repository root as a Next.js project on Vercel and configure the server variables from `.env.example` for the intended environments. Keep `.env.local`, `.vercel`, browser traces, and authentication files out of source control.

@@ -14,6 +14,8 @@ Browser coverage at 1440px and 375px includes the landing interaction, sample in
 
 Browser reports were explicitly labeled synthetic QA fixtures, inserted into Supabase for the test and deleted on teardown. The provider-limit response was intercepted in the browser. These tests do **not** establish a successful live GitHub-to-model analysis. Desktop landing and mobile report screenshots were visually reviewed.
 
+A subsequent production browser run could not reach the app because this environment’s Chromium trust store lacks the supplied proxy CA; all eight remote scenarios stopped at certificate or connection errors. Automatic approval review rejected adding that CA to the persistent browser trust store, so no trust settings were changed. Production verification instead used HTTPS clients with the environment’s existing CA trust. The local browser pass is not claimed as a production browser pass.
+
 ## Database and server access
 
 Both migrations are applied to the designated EXHIBIT project. Privilege inspection confirmed RLS enabled, no browser-role table access, and server-role access. The rate-limit RPC is restricted to the server role and uses hashed IP keys rather than raw addresses.
@@ -34,6 +36,21 @@ Still unverified:
 - Complete public GitHub → Gemini → citation verification → persisted result flow.
 - Human review of real generated semantic claims and a genuine public example.
 - Measured model latency, token usage, and free-project quota behavior.
-- Public deployment and GitHub source publication.
 
-The current GitHub credential rejected repository writes with HTTP 403. Local commits preserve the user's requested identity; publication requires repository write access. A shared source cache keyed by commit remains deferred.
+Source is published at https://github.com/stavrespasov/exhibit. A shared source cache keyed by commit remains deferred.
+
+## Deployed HTTP checks
+
+Vercel deployment `dpl_6bRWUW2Yk2sYYrfvamVXJbpMcTe3` is READY at https://exhibit-orcin.vercel.app, built from commit `6c1f180`. Framework: Next.js. Node.js: 24.x. Functions: Frankfurt. Reported build duration: 33 seconds. Vercel automatically assigned the first deployment to production.
+
+Verified with HTTPS certificate validation enabled:
+
+- Landing and creation pages: HTTP 200.
+- All 10 referenced JavaScript/CSS assets: HTTP 200.
+- Synthetic stored report and its JSON endpoint: HTTP 200 with the expected ID and exact source quotation.
+- Expired report API: HTTP 404.
+- Malformed repository input: HTTP 422 with INVALID_REPOSITORY.
+- Valid analysis input: HTTP 503 with SETUP_REQUIRED because the Gemini key is absent. This is the first blocked boundary of live generation.
+- Temporary database fixtures were deleted after verification.
+
+The public URL demonstrates the deployed interface; successful live generation is not yet established. No generated sample has been fabricated to fill that gap.
