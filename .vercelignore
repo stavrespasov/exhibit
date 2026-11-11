@@ -1,0 +1,8 @@
+.env*
+!.env.example
+work/
+test-results/
+playwright-report/
+coverage/
+e2e/
+tests/

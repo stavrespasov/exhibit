@@ -40,4 +40,3 @@ end;
 $$;
 revoke all on function public.reserve_exhibit_analysis(text) from public, anon, authenticated;
 grant execute on function public.reserve_exhibit_analysis(text) to service_role;
-
