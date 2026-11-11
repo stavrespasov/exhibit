@@ -1,6 +1,8 @@
 # EXHIBIT walkthrough
 
-Target length: 2 minutes 30 seconds. Record the final submission only after a real analysis and its share link have passed the release checks in TEST_REPORT.md.
+Published reference walkthrough: https://exhibit-orcin.vercel.app/demo.mp4. This continuous screen recording explores a genuine previously generated reference report; it does not show a new generation. A separate fresh production analysis completed in 18.727 seconds and is documented in TEST_REPORT.md.
+
+The guide below is for an optional narrated pitch of 2 minutes 30 seconds. Use actual results and retain the distinction between the reference repository and the applicant's own work.
 
 ## 0:00–0:20 — The problem
 

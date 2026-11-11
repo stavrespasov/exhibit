@@ -28,7 +28,7 @@ Next.js App Router, TypeScript, React, Tailwind CSS, Radix Dialog, Motion, Lucid
 
 ## Run locally
 
-Use Node.js 24–26 and npm.
+Use Node.js 24.x and npm.
 
 ```sh
 npm ci
@@ -84,6 +84,10 @@ Public source: https://github.com/stavrespasov/exhibit
 
 Reference example: https://exhibit-orcin.vercel.app/example
 
-The live source-to-report flow has been exercised with public repositories and real Gemini responses. The production build, 47 unit tests, and 10 desktop/mobile browser scenarios pass locally. The reference example contains independently rechecked citations and explicitly separates observed, partial, and unobserved requirements. See [TEST_REPORT.md](TEST_REPORT.md) for the measured runs and verification limits.
+Reference walkthrough: https://exhibit-orcin.vercel.app/demo.mp4 — a continuous recording of a genuine, previously generated report, source inspection, the manifest, and sharing. It does not depict a new analysis being generated.
+
+The live source-to-report flow has been exercised with public repositories and real Gemini responses, including a fresh Vercel production analysis saved and retrieved from Supabase. The production build and 47 unit tests pass; all 10 desktop/mobile browser scenarios passed against both the local production build and the public deployment. The reference example contains independently rechecked citations and explicitly separates observed, partial, and unobserved requirements.
+
+See the [product brief](docs/PRODUCT_BRIEF.md), [verification report](TEST_REPORT.md), and [narrated walkthrough guide](docs/WALKTHROUGH.md). Google free-tier capacity was intermittent during verification; a successful recorded run is not an availability guarantee.
 
 Deploy the repository root as a Next.js project on Vercel and configure the server variables from `.env.example` for the intended environments. Keep `.env.local`, `.vercel`, browser traces, and authentication files out of source control.

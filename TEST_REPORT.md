@@ -7,6 +7,7 @@ Updated: 11 November 2026
 - Production Next.js build and TypeScript validation passed.
 - Vitest: 47 tests across 7 files passed.
 - Playwright against the local production build: all 10 scenarios passed at desktop 1440px and phone 375px.
+- The same 10 scenarios passed against the public production URL, https://exhibit-orcin.vercel.app, in 23.2 seconds. No deployment credentials were injected into the browser.
 
 Unit coverage includes repository and input boundaries, exact citation correspondence, mixed-validity fail-closed behavior, source-file selection, credential exclusion, the 80,000-character model-source budget, same-origin enforcement behind a reverse proxy, streamed-body size and cancellation, bounded provider retries, and safe handling of malformed model proposals. HTTP 429 and permission failures are not retried. A recovered proposal still passes strict card and citation validation; invalid observations are withheld.
 
@@ -20,8 +21,9 @@ These are observed runs, not latency guarantees or semantic-accuracy measurement
 | --- | --- | --- | --- | --- |
 | shadcn-ui/taxonomy · 298a8857c7128a0d121e7f699dfd729f23b3966d | gemini-3.6-flash | 14.901s | 9,380 / 1,830 | 3 observed, 1 partial, 1 not observed; 0 rejected citations |
 | stavrespasov/exhibit · 4d7181673dc765946d3cca16e1bfbef600fb13ef | gemini-3.5-flash-lite | 37.766s | 6,826 / 1,905 | 1 observed, 4 not observed; 3 rejected citations |
+| shadcn-ui/taxonomy · same pinned commit, fresh Vercel production run | gemini-3.6-flash | 17.558s | 9,459 / 1,499 | 3 observed, 1 partial, 1 not observed; 8 citations, 0 rejected |
 
-The first complete browser POST took 17.3 seconds including the server's remaining work. Both reports were saved to Supabase and rendered by the application. Their model identifiers and token usage come from actual responses. The deployed configuration uses gemini-3.6-flash; Flash-Lite was an additional verification run.
+The first complete browser POST took 17.3 seconds including the server's remaining work. All three reports were saved to Supabase and rendered by the application. Their model identifiers and token usage come from actual responses. The deployed configuration uses gemini-3.6-flash; Flash-Lite was an additional verification run.
 
 The taxonomy reference inspected 12 of 136 eligible files and 18,926 source characters. A separate GitHub blob fetch independently confirmed all six cited excerpts, quoted substrings, ranges, commit references, and SHA-256 excerpt hashes. Human review of the five observations found:
 
@@ -32,6 +34,8 @@ The taxonomy reference inspected 12 of 136 eligible files and 18,926 source char
 - Automated behavior tests are not established in the bounded sample. This does not assert their absence elsewhere.
 
 The genuine reference report was then checked in desktop and phone browsers: all six citations could be opened, multi-source tabs worked, the 12-file manifest rendered, Escape closed the phone sheet, copied links opened in fresh browser contexts, and no JavaScript errors or page-wide horizontal overflow were observed.
+
+Those genuine-reference checks were repeated successfully against the public production deployment at both widths, separately from the synthetic regression fixtures. The reference belongs to shadcn-ui; it is labeled as a public reference and establishes no applicant contribution.
 
 ## Storage and access
 
@@ -47,4 +51,12 @@ Source verification establishes correspondence to inspected code. It does not pr
 
 ## Deployment verification
 
-The updated Vercel preview built successfully. Its /example route redirects to the genuine reference report. A new deployed analysis reached Google but returned the handled MODEL_UNAVAILABLE event while the provider reported HTTP 503. Successful new generation on the final production deployment therefore remains a release-verification limit until provider capacity returns. Public browser and stored-report checks are completed against the production release separately.
+Application commit a508b32f8dfda3d8dc68a0c4ff81e0e67ced3e86 built successfully as production deployment dpl_62HAFVE2LPn6fhK92ouYNZPrvNY8. A fresh request exercised Vercel → GitHub → Gemini → citation validation → Supabase save, completed in 18.727 seconds including the streamed response, and produced report VMoDfh6iiuVe1feEjPdS8Q6Ium8. Reading that saved report through the public API returned HTTP 200 with the correct repository and pinned commit.
+
+The tested deployment was promoted to the public production alias. Anonymous browser regression and genuine-reference checks then passed there. `/example` redirects to the genuine, reviewed report NKiL2O_NTr9FoRnMDf6jBykxe5g. Earlier deployed requests encountered handled Google HTTP 503 responses; the later success does not remove that provider-availability limitation.
+
+A production runtime-log query for error/fatal entries from 14:53–15:03 UTC on 11 November returned zero records. This bounded window covers the public browser checks, not the application's entire history.
+
+The 27.48-second reference walkthrough is a continuous recording of the public application exploring the real reference, source tabs, inspection manifest, sharing, and prefilled creation form. It contains no newly generated analysis. The H.264 MP4 was decoded successfully and includes that disclosure in its footer.
+
+The recorded model-cost estimate is $0 under the intended unbilled free-tier configuration. This is an application estimate, not an independently reconciled Google billing statement. No paid fallback is configured.
