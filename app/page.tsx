@@ -12,7 +12,7 @@ export default function Home() {
       <section className="hero shell">
         <div className="hero-copy">
           <div className="eyebrow"><span className="status-dot" />ENGINEERING EVIDENCE, ON RECORD</div>
-          <h1>Proof beats<br /><span className="hero-serif">promises.</span><span className="hero-star" aria-hidden="true">✳</span></h1>
+          <h1>Proof beats<br /><span className="hero-highlight">promises.</span><span className="hero-star" aria-hidden="true">✳</span></h1>
           <p className="hero-description">Your work deserves more than a bullet point.<br className="desktop-break" /> Turn a GitHub repository into source-backed evidence for the job you want.</p>
           <div className="hero-actions"><Button asChild><Link href="/create">Build your Exhibit<ArrowUpRight size={18} /></Link></Button><Link href={example} className="text-action">Explore an example <ArrowUpRight size={15} /></Link></div>
           <div className="hero-assurances"><span><Check size={12} />No account</span><span><Check size={12} />Public repositories</span><span><Check size={12} />Every source inspectable</span></div>

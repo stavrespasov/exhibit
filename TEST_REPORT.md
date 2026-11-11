@@ -2,6 +2,12 @@
 
 Updated: 11 November 2026
 
+## Neobrutalist refresh
+
+The landing page, creation form, evidence board, source inspector, and error states use the refreshed paper, lime, coral, and lavender palette with solid outlines and hard shadows. Production build and TypeScript validation passed. All 10 desktop/phone browser scenarios passed again against the refreshed production build in 29.3 seconds.
+
+The expanded landing preview was checked at 320, 375, 640, 768, 900, 901, 1024, 1280, and 1440 pixels: document width matched viewport width throughout. The creation form, genuine reference board, and mobile source sheet were also visually reviewed. The reference walkthrough was re-recorded from the production build using the genuine stored reference, with no new generation shown.
+
 ## Build and automated boundaries
 
 - Production Next.js build and TypeScript validation passed.
@@ -57,6 +63,6 @@ The tested deployment was promoted to the public production alias. Anonymous bro
 
 A production runtime-log query for error/fatal entries from 14:53–15:03 UTC on 11 November returned zero records. This bounded window covers the public browser checks, not the application's entire history.
 
-The 27.48-second reference walkthrough is a continuous recording of the public application exploring the real reference, source tabs, inspection manifest, sharing, and prefilled creation form. It contains no newly generated analysis. The H.264 MP4 was decoded successfully and includes that disclosure in its footer.
+The current 26.92-second reference walkthrough is a continuous recording of the production build exploring the real reference, source tabs, inspection manifest, sharing, and prefilled creation form. It contains no newly generated analysis. The H.264 MP4 was decoded successfully and includes that disclosure in its footer.
 
 The recorded model-cost estimate is $0 under the intended unbilled free-tier configuration. This is an application estimate, not an independently reconciled Google billing statement. No paid fallback is configured.
