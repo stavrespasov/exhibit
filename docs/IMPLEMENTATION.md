@@ -25,9 +25,9 @@ Do not execute inspected repositories or follow instructions embedded in source 
 - Source inspector: syntax highlighting, original line numbers, commit-pinned source links.
 - Shared result: public read-only URL, copy action, explicit expiration, and contribution limitations.
 
-Neobrutalist presentation in warm neutrals: paper #F4F2ED, porcelain #FFFEFA, charcoal #24221F, stone #DEDAD2, taupe #C6BEB2, and fog #E4E4DF. Primary actions use charcoal with porcelain text. Use solid two- or three-pixel outlines, square corners, and hard offset shadows. Observed, partial, and unobserved states retain their labels and icons alongside subtle neutral fills.
+Neobrutalist presentation with one strong brand accent: cobalt #2D55E5, off-white #F4F6FB, white #FFFFFF, ink #181B22, and pale blue #E4EBFF. Primary actions use white on cobalt. Use solid two- or three-pixel outlines, square corners, and hard offset shadows. Evidence states retain their labels and icons alongside restrained blue, amber, and neutral fills. Decorative star/sticker graphics and emoji characters are omitted.
 
-Typography: heavy Geist headings, Geist body text, and IBM Plex Mono metadata. Bold italic emphasis and a tilted charcoal headline keep the dossier expressive; source excerpts retain a dark, syntax-highlighted reading surface.
+Typography: heavy Geist headings, Geist body text, and IBM Plex Mono metadata. Bold italic emphasis and a tilted cobalt headline keep the dossier expressive; source excerpts retain a dark, syntax-highlighted reading surface.
 
 Support a 375px viewport, keyboard access, visible focus, and reduced motion.
 

@@ -4,9 +4,9 @@ Updated: 11 November 2026
 
 ## Neobrutalist refresh
 
-The landing page, creation form, evidence board, source inspector, and error states use a warm neutral palette inspired by the supplied reference: ivory, porcelain, stone, taupe, and charcoal, with solid outlines and hard shadows. Primary buttons and the highlighted headline use porcelain on charcoal. Production build and TypeScript validation passed. All 10 desktop/phone browser scenarios passed again against the neutral production build in 23.1 seconds.
+The landing page, creation form, evidence board, source inspector, and error states use cobalt, off-white, white, and ink, with solid outlines and hard shadows. Primary buttons and the highlighted headline use white on cobalt. Decorative star and floating-sticker graphics were removed, along with emoji-style characters in UI copy. A source scan of all 14 UI/route TypeScript files found no literal emoji characters. Production build and TypeScript validation passed. All 10 desktop/phone browser scenarios passed again against the cobalt production build in 24.2 seconds.
 
-Calculated text/background contrast is 15.72:1 for primary buttons, 10.69:1 on hover, 6.56:1 for secondary body text, and at least 9.89:1 for the three evidence badges. Badge labels and icons continue to distinguish evidence states. These color-pair checks do not constitute a full accessibility audit.
+Calculated text/background contrast is 5.93:1 for primary buttons, 8.22:1 on hover, 6.23:1 for secondary body text, and at least 13.97:1 for the three evidence badges. Badge labels and functional icons continue to distinguish evidence states. These color-pair checks do not constitute a full accessibility audit.
 
 The expanded landing preview was checked at 320, 375, 640, 768, 900, 901, 1024, 1280, and 1440 pixels: document width matched viewport width throughout. The creation form, genuine reference board, and mobile source sheet were also visually reviewed. The reference walkthrough was re-recorded from the production build using the genuine stored reference, with no new generation shown.
 
@@ -65,6 +65,6 @@ The tested deployment was promoted to the public production alias. Anonymous bro
 
 A production runtime-log query for error/fatal entries from 14:53–15:03 UTC on 11 November returned zero records. This bounded window covers the public browser checks, not the application's entire history.
 
-The current 26.52-second reference walkthrough is a continuous recording of the production build exploring the real reference, source tabs, inspection manifest, sharing, and prefilled creation form. It contains no newly generated analysis. The H.264 MP4 was decoded successfully and includes that disclosure in its footer.
+The current 26.36-second reference walkthrough is a continuous recording of the production build exploring the real reference, source tabs, inspection manifest, sharing, and prefilled creation form. It contains no newly generated analysis. The H.264 MP4 was decoded successfully and includes that disclosure in its footer.
 
 The recorded model-cost estimate is $0 under the intended unbilled free-tier configuration. This is an application estimate, not an independently reconciled Google billing statement. No paid fallback is configured.

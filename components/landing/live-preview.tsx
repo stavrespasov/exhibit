@@ -7,7 +7,6 @@ export function LivePreview() {
   const reduce = useReducedMotion();
   return <div className="preview-wrap">
     <div className="folder-tab"><span className="mono">THE EVIDENCE DOSSIER</span><span>001</span></div>
-    <span className="preview-sticker" aria-hidden="true">OPEN THE<br />SOURCE <ArrowUpRight size={20} /></span>
     <motion.div className="preview-paper" initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6, delay: .15 }}>
       <div className="preview-top"><span className="mono">EXHIBIT / UNDER THE HOOD</span><span className="small-stamp"><span />SOURCE INSPECTOR</span></div>
       <div className="preview-title">Every claim.<br /><em>A paper trail.</em></div>
@@ -23,6 +22,6 @@ export function LivePreview() {
       </div>
       <div className="preview-bottom"><span><Check size={13} /> Code you can inspect</span><button onClick={() => setOpen(!open)}>{open ? "Close source" : "Open source"} <ArrowUpRight size={13} /></button></div>
     </motion.div>
-    <div className="preview-caption mono"><span>NOT A SCORE. A SOURCE.</span><span>↖ TRY THE CARD</span></div>
+    <div className="preview-caption mono"><span>NOT A SCORE. A SOURCE.</span><span>TRY THE CARD</span></div>
   </div>;
 }
