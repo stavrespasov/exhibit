@@ -8,7 +8,7 @@ export const RequirementSchema = z.object({
 });
 export const RequirementsSchema = z.object({
   title: z.string().max(120),
-  requirements: z.array(RequirementSchema).min(1).max(6),
+  requirements: z.array(RequirementSchema).max(6),
 });
 export const CitationSchema = z.object({
   fileId: z.string().regex(/^FILE-\d{2}$/),

@@ -36,12 +36,13 @@ export function verifyCards(candidates: unknown[], requirements: Requirement[], 
     if (!candidate?.success) return empty;
     const proposed = candidate.data;
     if (proposed.status === "not_observed") return { ...empty, limitations: proposed.limitations.length ? proposed.limitations : empty.limitations };
+    let citationFailed = false;
     const citations = proposed.citations.flatMap(citation => {
       const checked = verifyCitation(citation, manifest);
-      if (!checked.valid) { rejectedCitations++; return []; }
+      if (!checked.valid) { rejectedCitations++; citationFailed = true; return []; }
       return [checked.citation];
     });
-    if (!citations.length) return { ...empty, validationNote: "Candidate source references did not pass validation." };
+    if (citationFailed || !citations.length) return { ...empty, validationNote: "Candidate source references did not pass validation. The proposed observation was withheld." };
     if (citations.every(citation => documentationOnly(citation.filePath))) return {
       ...empty, validationNote: "Only dependency or documentation references were found; implementation evidence was not established.",
     };

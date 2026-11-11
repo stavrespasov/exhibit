@@ -1,5 +1,8 @@
 import { z } from "zod";
-export class InputError extends Error {}
+import { AppError } from "../errors";
+export class InputError extends AppError {
+  constructor(message: string) { super("INVALID_REPOSITORY", message, 422); }
+}
 export function parseRepository(value: string): { owner: string; repo: string } {
   let url: URL;
   try { url = new URL(value.trim()); } catch { throw new InputError("Enter a public GitHub repository URL."); }

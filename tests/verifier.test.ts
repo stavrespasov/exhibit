@@ -39,6 +39,13 @@ describe("citation trust boundary", () => {
   it("retains partial evidence only with valid implementation references", () => {
     expect(verifyCards([{ ...proposed, status: "partial" }], [requirement], manifest).cards[0].status).toBe("partial");
   });
+  it("withholds a multi-source claim when one citation is forged", () => {
+    const mixed = { ...proposed, citations: [citation, { ...citation, fileId: "FILE-99" }] };
+    const result = verifyCards([mixed], [requirement], manifest);
+    expect(result.cards[0].status).toBe("not_observed");
+    expect(result.cards[0].explanation).not.toBe(proposed.explanation);
+    expect(result.rejectedCitations).toBe(1);
+  });
   it("does not turn dependencies into implementation evidence", () => {
     const dependency = { ...manifest, files: { "FILE-01": { ...manifest.files["FILE-01"], path: "package.json" } } };
     expect(verifyCards([proposed], [requirement], dependency).cards[0].status).toBe("not_observed");

@@ -1,52 +1,39 @@
 # Verification report
 
-Updated: 10 November 2026
+Updated: 11 November 2026
 
 ## Automated checks completed
 
-Vitest 5.1.0: 2 test files passed, 29 tests passed.
+- Vitest: 3 test files, 33 tests passed.
+- Next.js production build and TypeScript validation passed.
+- Playwright: all 8 desktop/mobile scenarios passed across the initial run and the targeted rerun after correcting an ambiguous alert selector. Six scenarios passed initially; the two affected error-recovery scenarios passed on rerun.
 
-Covered:
+Unit coverage includes strict repository URLs and input boundaries; exact job quotations; invalid, fractional, and out-of-bounds citations; CRLF normalization; immutable source links; dependency-only evidence; file selection, credential exclusion, and size limits. A card with any invalid proposed citation fails closed, including mixed valid/invalid citation sets. These checks establish source correspondence, not the correctness of a model's interpretation.
 
-- Repository-root URL validation, unsupported hosts, credentials in URLs, additional paths, and unexpected inputs.
-- Job-description length and exact quotation checks.
-- Missing file IDs, invalid/fractional/out-of-bounds ranges, trivial quotes, and mismatched source text.
-- CRLF normalization and safely encoded source links pinned to a full commit SHA.
-- Removal of positive explanations when citations fail.
-- Dependency-only references do not become positive implementation evidence.
-- Partial cards require valid source references.
-- Missing requirements remain visible as not observed.
+Browser coverage at 1440px and 375px includes the landing interaction, sample input, preserved inputs after a provider-limit error, a real database-backed report, the source inspector, clipboard sharing opened in a fresh browser context, expired-report 404, malformed-repository 422, and horizontal overflow checks. The tested pages produced no JavaScript errors.
 
-These tests verify reference correspondence and input boundaries, not the correctness of a model's semantic interpretation.
+Browser reports were explicitly labeled synthetic QA fixtures, inserted into Supabase for the test and deleted on teardown. The provider-limit response was intercepted in the browser. These tests do **not** establish a successful live GitHub-to-model analysis. Desktop landing and mobile report screenshots were visually reviewed.
 
-## Database configuration checked
+## Database and server access
 
-The exhibits table and expiry index were created in the designated Supabase project.
+Both migrations are applied to the designated EXHIBIT project. Privilege inspection confirmed RLS enabled, no browser-role table access, and server-role access. The rate-limit RPC is restricted to the server role and uses hashed IP keys rather than raw addresses.
 
-SQL privilege inspection confirmed:
+- SQL transaction insert/read/expiry checks passed and rolled back.
+- A rate-limit transaction allowed five requests and rejected the sixth, then rolled back.
+- The saved Development server key was validated against the Supabase REST API with HTTP 200.
+- Browser fixture insert, application server read, report rendering, expiry handling, and fixture deletion succeeded through the HTTP data path.
 
-- Row-level security enabled.
-- anon SELECT and INSERT privileges absent.
-- authenticated SELECT privilege absent.
-- service_role INSERT privilege present.
+The security advisor's informational RLS-without-policy notice is intentional for server-only tables; browser roles have no table privileges or access policies.
 
-The Supabase security advisor returned an informational RLS-without-policy notice. This is intentional for a table accessed only by the server's protected credential; browser roles have no table privileges or row-access policies.
+## Model provider and release limits
 
-A SQL transaction successfully inserted and read a temporary fixture, checked its future expiry, and rolled back. This verifies the database schema through the management connection; the app's server-key HTTP path still requires its separate check.
+An earlier AI Gateway probe returned HTTP 403 because billing verification was required. The application now calls Google Gemini directly under the intended free, unbilled configuration, with no Gateway or paid-provider fallback. No live Gemini result has been received yet.
 
-## External service probe
+Still unverified:
 
-A bounded AI Gateway smoke request using the linked project's OIDC credential returned HTTP 403: the Vercel team must add a valid payment method to unlock AI Gateway credits.
+- Complete public GitHub → Gemini → citation verification → persisted result flow.
+- Human review of real generated semantic claims and a genuine public example.
+- Measured model latency, token usage, and free-project quota behavior.
+- Public deployment and GitHub source publication.
 
-No generated answer was received. Model quality, latency, inference cost, and evidence extraction remain unverified.
-
-## Remaining verification
-
-- Real server-to-Supabase insert/read/expiry flow once the server key is configured.
-- Complete public GitHub -> model -> verifier -> persisted Exhibit flow.
-- Human-reviewed semantic evidence fixtures.
-- Public sharing, mobile and keyboard interaction, and browser tests.
-- Measured end-to-end time/cost.
-- Public deployment and source publication.
-
-No passing result is claimed for the remaining items.
+The current GitHub credential rejected repository writes with HTTP 403. Local commits preserve the user's requested identity; publication requires repository write access. A shared source cache keyed by commit remains deferred.
